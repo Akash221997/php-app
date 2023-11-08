@@ -27,7 +27,3 @@ jobs:
 
         # Use SSH to connect to the EC2 instance and restart Apache
         ssh -i key.pem -o StrictHostKeyChecking=no $USERNAME@$EC2_HOST "sudo systemctl restart httpd"
-
-      # Clean up the private key file
-      post-job:
-        - run: rm key.pem
