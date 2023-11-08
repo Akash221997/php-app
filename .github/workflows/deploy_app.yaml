@@ -18,4 +18,4 @@ jobs:
         target: /var/www/html  # Apache web server root directory
     - name: SSH into EC2 and restart Apache
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart httpd'
+        ssh -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart httpd'
