@@ -16,7 +16,7 @@ jobs:
     - name: Install SSH key
       run: |
         echo "$SSH_PRIVATE_KEY" > ssh_key.pem
-        chmod 600 ssh_key.pem
+        chmod 400 ssh_key.pem
         ssh-add ssh_key.pem
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
