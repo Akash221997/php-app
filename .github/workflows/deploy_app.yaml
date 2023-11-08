@@ -1,21 +1,28 @@
+name: Deploy to EC2
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Copy files to EC2
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        source: "index.php" # Path to your application code
-        target: "/home/ec2-user"  # Apache web server root directory
-    - name: SSH into EC2 and restart Apache
+
+    - name: Install SSH key
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart httpd'
+        echo "$SSH_PRIVATE_KEY" > ssh_key.pem
+        chmod 600 ssh_key.pem
+        ssh-add ssh_key.pem
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+
+    - name: Copy files to EC2
+      run: sudo scp -o StrictHostKeyChecking=no -i ssh_key.pem -r * ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
+    
+    - name: SSH into EC2
+      run: ssh -o StrictHostKeyChecking=no -i ssh_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo systemctl restart httpd"
