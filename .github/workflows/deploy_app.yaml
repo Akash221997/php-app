@@ -27,3 +27,8 @@ jobs:
 
         # Use SSH to connect to the EC2 instance and restart Apache
         ssh -i key.pem -o StrictHostKeyChecking=no $USERNAME@$EC2_HOST "sudo systemctl restart httpd"
+    - name: Remove the SSH key
+      run: |
+        # Remove the added ssh keys during the build process
+        rm key.pem
+    
